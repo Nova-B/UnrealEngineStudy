@@ -379,6 +379,78 @@
             overflow-x: auto;
         }
 
+        /* 홈 버튼 */
+        .home-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: var(--accent);
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            font-weight: 600;
+            color: var(--bg);
+        }
+        .home-btn:hover {
+            background: var(--accent-dim);
+        }
+        .home-icon { font-size: 1.1rem; }
+
+        /* 대시보드 레이아웃 */
+        .dashboard { padding: 20px; }
+        .dashboard-header { text-align: center; margin-bottom: 40px; }
+        .dashboard-header h1 { font-size: 2rem; color: var(--accent); margin-bottom: 10px; }
+        .dashboard-header .subtitle { color: var(--text-muted); font-size: 1rem; margin-bottom: 20px; }
+        .stats { display: flex; gap: 30px; justify-content: center; margin-top: 15px; }
+        .stat { font-size: 1rem; color: var(--text-muted); }
+        .stat strong { color: var(--accent); font-size: 1.3rem; }
+
+        /* 챕터 카드 */
+        .chapter-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+        .card-icon { font-size: 2rem; margin-bottom: 10px; }
+        .card h3 { color: var(--accent); margin-bottom: 8px; font-size: 1rem; }
+        .card p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0; }
+        .card-count {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 4px 12px;
+            background: var(--bg-code);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        .section-title-dash { margin: 40px 0 20px 0; }
+        .section-title-dash h2 {
+            font-size: 1.2rem;
+            color: var(--text);
+            border-bottom: none;
+            margin: 0;
+        }
+
+        @media (max-width: 1200px) {
+            .chapter-cards { grid-template-columns: repeat(2, 1fr); }
+        }
+
         @media (max-width: 900px) {
             .sidebar {
                 width: 100%;
@@ -391,6 +463,9 @@
             .main {
                 padding: 20px;
             }
+            .chapter-cards { grid-template-columns: 1fr; }
+            .mindmap { height: 350px; }
+            .mindmap-node { padding: 8px 12px; font-size: 0.8rem; }
         }
     </style>
     <!-- Highlight.js for syntax highlighting -->
@@ -404,6 +479,12 @@
             <h1>Unreal Engine</h1>
         </div>
         <div class="sidebar-content" id="nav-chapters">
+            <!-- 홈 버튼 -->
+            <div class="home-btn" onclick="showDashboard()">
+                <span class="home-icon">🏠</span>
+                <span>Home</span>
+            </div>
+
             <!-- Framework: 언리얼 클래스 구조 및 초기화 (2.3~2.22) -->
             <div class="chapter-toggle collapsed" onclick="toggleChapter(this)">
                 <h2>Framework</h2>
@@ -855,9 +936,75 @@
     </nav>
     <main class="main">
         <div class="content-area" id="content">
-            <div class="welcome">
-                <h1>Unreal Engine Tick System</h1>
-                <p>좌측 메뉴에서 섹션을 선택하세요.</p>
+            <div class="dashboard" id="dashboard">
+                <!-- 헤더 -->
+                <div class="dashboard-header">
+                    <h1>Unreal Engine 학습 노트</h1>
+                    <p class="subtitle">소스 코드 기반 언리얼 엔진 완전 분석</p>
+                    <div class="stats">
+                        <span class="stat"><strong>9</strong> 챕터</span>
+                        <span class="stat"><strong>94</strong> 섹션</span>
+                    </div>
+                </div>
+
+                <!-- 챕터 카드 그리드 -->
+                <div class="section-title-dash"><h2>Chapters</h2></div>
+                <div class="chapter-cards">
+                    <div class="card" onclick="goToChapter('framework')">
+                        <div class="card-icon">🏗️</div>
+                        <h3>Framework</h3>
+                        <p>클래스 구조와 초기화</p>
+                        <span class="card-count">30 섹션</span>
+                    </div>
+                    <div class="card" onclick="goToChapter('tick')">
+                        <div class="card-icon">⏱️</div>
+                        <h3>Tick</h3>
+                        <p>Tick 시스템 완전 분석</p>
+                        <span class="card-count">20 섹션</span>
+                    </div>
+                    <div class="card" onclick="goToChapter('component')">
+                        <div class="card-icon">🧩</div>
+                        <h3>Component</h3>
+                        <p>컴포넌트 시스템</p>
+                        <span class="card-count">15 섹션</span>
+                    </div>
+                    <div class="card" onclick="goToChapter('object')">
+                        <div class="card-icon">🔧</div>
+                        <h3>Object Constructor</h3>
+                        <p>UObject 생성</p>
+                        <span class="card-count">5 섹션</span>
+                    </div>
+                    <div class="card" onclick="goToChapter('spawn')">
+                        <div class="card-icon">🎭</div>
+                        <h3>Spawn Actor</h3>
+                        <p>액터 생성 과정</p>
+                        <span class="card-count">5 섹션</span>
+                    </div>
+                    <div class="card" onclick="goToChapter('blueprint')">
+                        <div class="card-icon">📘</div>
+                        <h3>Blueprint</h3>
+                        <p>블루프린트 시스템</p>
+                        <span class="card-count">8 섹션</span>
+                    </div>
+                    <div class="card" onclick="goToChapter('render')">
+                        <div class="card-icon">🎨</div>
+                        <h3>Render</h3>
+                        <p>렌더링 파이프라인</p>
+                        <span class="card-count">3 섹션</span>
+                    </div>
+                    <div class="card" onclick="goToChapter('gc')">
+                        <div class="card-icon">🗑️</div>
+                        <h3>Garbage Collector</h3>
+                        <p>메모리 관리</p>
+                        <span class="card-count">6 섹션</span>
+                    </div>
+                    <div class="card" onclick="goToChapter('ptr')">
+                        <div class="card-icon">👆</div>
+                        <h3>Pointer</h3>
+                        <p>포인터 시스템</p>
+                        <span class="card-count">2 섹션</span>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -2515,7 +2662,7 @@ World
                     <p>게임모드는 <strong>서버에만 존재</strong>합니다!</p>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (!IsNetMode(NM_Client) && !AuthorityGameMode)
 {
     // GameMode 생성 및 저장
@@ -2546,7 +2693,7 @@ World
 
                 <h3>1순위: World Setting에서 가져오기</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">AWorldSettings* Settings = World->GetWorldSettings();
 
 // WorldSetting에 설정되어 있는 GameModeClass 가져옴
@@ -2563,7 +2710,7 @@ TSubclassOf<AGameModeBase> GameClass = Settings->DefaultGameMode;</code></pre>
 
                 <h3>2순위: Project Setting에서 가져오기</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// WorldSetting에 없으면 Project Setting에 설정되어있는 GameModeClass 가져옴
 if (!GameClass)
 {
@@ -2573,7 +2720,7 @@ if (!GameClass)
 
                 <h3>3순위: 기본 클래스 사용</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 둘 다 설정되어 있지 않으면 기본 클래스 사용
 if (!GameClass)
 {
@@ -2584,7 +2731,7 @@ if (!GameClass)
                 <h2>GameMode 생성</h2>
                 <h3>SpawnActor 사용</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// World에 생성하게 되므로 NewObject가 아니라 SpawnActor를 실행
 AGameModeBase* GameMode = World->SpawnActor<AGameModeBase>(GameClass, SpawnInfo);</code></pre>
                 </div>
@@ -2700,7 +2847,7 @@ Project Settings: None
                     <p>이 변수가 true여야만 초기화 과정이 진행 가능합니다.</p>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">bActorsInitialized = true;</code></pre>
                 </div>
 
@@ -2717,7 +2864,7 @@ Project Settings: None
                     <p>게임 시작 후 Actor가 등록되자마자 <strong>매우 빠른 시점</strong>에 호출됩니다.</p>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 게임을 초기화하는 단계로 PreInitializeComponents() 보다 먼저 호출
 AuthorityGameMode->InitGame(FPaths::GetBaseFilename(InURL.Map), Options, Error);</code></pre>
                 </div>
@@ -2726,7 +2873,7 @@ AuthorityGameMode->InitGame(FPaths::GetBaseFilename(InURL.Map), Options, Error);
                 <h3>3. ULevel::RouteActorInitialize</h3>
                 <p>Level에 있는 모든 Actor의 초기화를 진행합니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">Level->RouteActorInitialize(ProcessAllRouteActorInitializationGranularity);</code></pre>
                 </div>
 
@@ -2737,7 +2884,7 @@ AuthorityGameMode->InitGame(FPaths::GetBaseFilename(InURL.Map), Options, Error);
                     <p>네트워크와 연관성이 있는 액터와 없는 액터를 분리하여 정렬합니다.</p>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 네트워크에 관련있는 액터와 없는 액터를 구분하여 정렬
 // 네트워크와 관련이 없는 액터는 앞에 정렬, 네트워크와 관련 있는 액터는 뒤에 정렬
 // 특정 유형의 액터 반복자의 성능을 높이기 위한 방식
@@ -2782,7 +2929,7 @@ NewActors[] = [WorldSettings, Actor1, Actor2, ..., NetActor1, NetActor2, ...]</d
                     <p>이 과정을 통해 네트워크가 필요한 액터들만 for문을 순회하는 것이 가능해집니다.</p>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 네트워크 액터만 순회 (최적화됨)
 for (int32 i = iFirstNetRelevantActor; i < Actors.Num(); i++)
 {
@@ -2794,7 +2941,7 @@ for (int32 i = iFirstNetRelevantActor; i < Actors.Num(); i++)
                 <h2>후처리 단계</h2>
                 <h3>5. Actor Initialize Broadcast</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Actor의 모든 Init가 끝났으니 BroadCast
 OnActorsInitialized.Broadcast(OnActorInitParams);
 FWorldDelegates::OnWorldInitializedActors.Broadcast(OnActorInitParams);</code></pre>
@@ -2802,7 +2949,7 @@ FWorldDelegates::OnWorldInitializedActors.Broadcast(OnActorInitParams);</code></
 
                 <h3>6. AI System 초기화</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (NavigationSystem != nullptr)
 {
     NavigationSystem->OnInitializeActors();
@@ -2879,7 +3026,7 @@ if (AISystem != nullptr)
                 <h2>초기화 파라미터</h2>
                 <h3>처리 단위 설정</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">const int32 ProcessAllRouteActorInitializationGranularity = 0;
 for (int32 LevelIndex = 0; LevelIndex < Levels.Num(); LevelIndex++)
 {
@@ -2898,7 +3045,7 @@ for (int32 LevelIndex = 0; LevelIndex < Levels.Num(); LevelIndex++)
                 <h2>ULevel::RouteActorInitialize</h2>
                 <h3>전체 처리 여부 결정</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">const bool bFullProcessing = (NumActorsToProcess <= 0);</code></pre>
                 </div>
                 <ul>
@@ -2909,7 +3056,7 @@ for (int32 LevelIndex = 0; LevelIndex < Levels.Num(); LevelIndex++)
                 <h2>액터 초기화 3단계</h2>
                 <h3>1. ERouteActorInitializationState::Preinitialize</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">case ERouteActorInitializationState::Preinitialize:
 {
     Actor->PreInitializeComponents();
@@ -2926,7 +3073,7 @@ for (int32 LevelIndex = 0; LevelIndex < Levels.Num(); LevelIndex++)
 
                 <h3>2. ERouteActorInitializationState::Initialize</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">case ERouteActorInitializationState::Initialize:
 {
     Actor->InitializeComponents();
@@ -2944,7 +3091,7 @@ for (int32 LevelIndex = 0; LevelIndex < Levels.Num(); LevelIndex++)
 
                 <h3>3. BeginPlay 조건부 실행</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">case ERouteActorInitializationState::BeginPlay:
 {
     if (OwningWorld->HasBegunPlay())
@@ -2965,7 +3112,7 @@ for (int32 LevelIndex = 0; LevelIndex < Levels.Num(); LevelIndex++)
                 <h2>처리 제어 로직</h2>
                 <h3>공통 조건문 분석</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">++RouteActorInitializationIndex;
 if (!bFullProcessing && (--NumActorsToProcess == 0))
 {
@@ -2987,7 +3134,7 @@ if (!bFullProcessing && (--NumActorsToProcess == 0))
                 <h2>GameMode 초기화 예시</h2>
                 <h3>PreInitializeComponents에서 GameState 생성</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// GameState 생성
 UWorld* World = GetWorld();
 GameState = World->SpawnActor<AGameStateBase>(GameStateClass, SpawnInfo);
@@ -3078,7 +3225,7 @@ if (GameState)
                 <h2>SpawnPlayActor 호출 체인</h2>
                 <p>CreateInnerProcessPIEGameInstance → StartPlayInEditorGameInstance</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (LocalPlayer)
 {
     FString Error;
@@ -3094,7 +3241,7 @@ if (GameState)
                 <h3>1. ULocalPlayer::SpawnPlayActor</h3>
                 <p>World의 SpawnPlayActor를 호출합니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">PlayerController = InWorld->SpawnPlayActor(
     this,                                            // LocalPlayer
     ROLE_SimulatedProxy,                             // RemoteRole
@@ -3119,7 +3266,7 @@ if (GameState)
                 <h3>2. UWorld::SpawnPlayActor - PlayerController 생성</h3>
                 <p>GameMode의 Login 함수를 통해 PlayerController를 생성합니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (AGameModeBase* const GameMode = GetAuthGameMode())
 {
     // 언리얼은 데디케이트를 중심으로 만들어진 프레임워크라서
@@ -3157,7 +3304,7 @@ if (GameState)
 
                 <h3>3. PlayerController와 LocalPlayer 연결</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Player를 PlayerController에 연결 + PlayerInput 생성
 // NewPlayer는 UPlayer*
 NewPlayerController->SetPlayer(NewPlayer);</code></pre>
@@ -3166,7 +3313,7 @@ NewPlayerController->SetPlayer(NewPlayer);</code></pre>
 
                 <h3>4. Pawn 생성 및 Possess</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Pawn 생성과 Possess 진행
 GameMode->PostLogin(NewPlayerController);</code></pre>
                 </div>
@@ -3295,7 +3442,7 @@ PlayerController <─────────────┘
                 <h2>코드 분석</h2>
                 <h3>PlayerController 생성 및 초기화</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// PlayerController + PlayerState + PlayerCameraManager 생성
 APlayerController* const NewPlayerController = SpawnPlayerController(InRemoteRole, Options);
 if (NewPlayerController == nullptr)
@@ -3315,14 +3462,14 @@ ErrorMessage = InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);</c
                     <p>내부적으로 SpawnPlayerControllerCommon만 호출합니다. 앞으로 SpawnPlayerController는 없어지고 SpawnPlayerControllerCommon만 남을 예정입니다.</p>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">return SpawnPlayerControllerCommon(InRemoteRole, FVector::ZeroVector, FRotator::ZeroRotator, PlayerControllerClass);</code></pre>
                 </div>
 
                 <h3>SpawnPlayerControllerCommon</h3>
                 <p>PlayerController 생성만 하는 것처럼 보이지만, 중요한 건 PostInitializeComponents를 봐야 합니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// PlayerController 생성
 APlayerController* NewPC = GetWorld()->SpawnActor<APlayerController>(
     InPlayerControllerClass,
@@ -3335,7 +3482,7 @@ APlayerController* NewPC = GetWorld()->SpawnActor<APlayerController>(
                 <h2>PostInitializeComponents: 추가 생성 과정</h2>
                 <p>PlayerState와 CameraManager를 생성합니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (IsValid(this) && (GetNetMode() != NM_Client))
 {
     // PlayerState 생성
@@ -3351,7 +3498,7 @@ SpawnPlayerCameraManager();
                 <h2>PlayerState 생성</h2>
                 <h3>InitPlayerState</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// GameMode를 통해서 PlayerState의 Class를 가져옴
 TSubclassOf<APlayerState> PlayerStateClassToSpawn = GameMode->PlayerStateClass;
 
@@ -3367,14 +3514,14 @@ SetPlayerState(World->SpawnActor<APlayerState>(PlayerStateClassToSpawn, SpawnInf
                 <h3>SetPlayerState</h3>
                 <p>변수에 대입이 전부입니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">PlayerState = InPlayerState;</code></pre>
                 </div>
 
                 <h2>PlayerCameraManager 생성</h2>
                 <h3>SpawnPlayerCameraManager</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// PlayerCameraManagerClass Override에 맞게 생성
 if (PlayerCameraManagerClass != NULL)
 {
@@ -3412,7 +3559,7 @@ if (PlayerCameraManager != NULL)
 
                 <h3>검증 및 에러 처리</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 새로운 컨트롤러에 대한 초기화 로직을 구현할 수 있도록 제공하는 함수
 ErrorMessage = InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
 
@@ -3516,7 +3663,7 @@ return NewPlayerController;</code></pre>
                     </ul>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Input 전용 Tick
 if (PlayerInput)
 {
@@ -3533,7 +3680,7 @@ if (IsValid(this))
                 <h2>1단계: 입력 처리 시작</h2>
                 <h3>TickPlayerInput</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">PlayerInput->Tick(DeltaSeconds);
 
 // 본격적인 입력 처리 시작
@@ -3543,7 +3690,7 @@ ProcessPlayerInput(DeltaSeconds, bGamePaused);</code></pre>
                 <h3>ProcessPlayerInput</h3>
                 <p>InputStack에 입력받은 Input을 저장합니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">static TArray<UInputComponent*> InputStack;
 
 // PlayerController를 통해 InputComponent 저장
@@ -3569,7 +3716,7 @@ BuildInputStack(InputStack);</code></pre>
                     </ul>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (PlayerController)
 {
     PlayerController->PreProcessInput(DeltaTime, bGamePaused);
@@ -3583,7 +3730,7 @@ if (PlayerController)
 
                 <h3>Key 이벤트 평가</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// KeysWithEvents에 InputKey들 저장
 EvaluateKeyMapState(DeltaTime, bGamePaused, OUT KeysWithEvents);</code></pre>
                 </div>
@@ -3594,7 +3741,7 @@ EvaluateKeyMapState(DeltaTime, bGamePaused, OUT KeysWithEvents);</code></pre>
 
                 <h3>델리게이트 실행</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// InputComponent들에 등록된 InputKey에 맞게 델리게이트 실행
 EvaluateInputDelegates(InputComponentStack, DeltaTime, bGamePaused, KeysWithEvents);</code></pre>
                 </div>
@@ -3608,7 +3755,7 @@ EvaluateInputDelegates(InputComponentStack, DeltaTime, bGamePaused, KeysWithEven
 
                 <h3>입력 처리 종료</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 이 프레임에 대한 입력 처리를 완료하고 다음 업데이트를 위해 정리
 FinishProcessingPlayerInput();</code></pre>
                 </div>
@@ -3623,7 +3770,7 @@ FinishProcessingPlayerInput();</code></pre>
                     </ul>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 모든 Key에 대한 값을 매번 생성하는게 아니라
 // 사용하는 Key는 저장해놓고 bConsumed을 통해 체크
 for (TMap<FKey, FKeyState>::TIterator It(KeyStateMap); It; ++It)
@@ -3724,7 +3871,7 @@ for (TMap<FKey, FKeyState>::TIterator It(KeyStateMap); It; ++It)
                 <h4>1. 양방향 연결</h4>
                 <p>PlayerController와 LocalPlayer가 <strong>서로를 저장</strong>합니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Player <-> PlayerController 연결
 Player = InPlayer;
 InPlayer->PlayerController = this;</code></pre>
@@ -3740,13 +3887,13 @@ InPlayer->PlayerController = this;</code></pre>
 
                 <h4>2. 네트워크 설정</h4>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">SetAsLocalPlayerController();</code></pre>
                 </div>
 
                 <h4>3. PlayerInput 생성</h4>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// PlayerInput 생성
 InitInputSystem();</code></pre>
                 </div>
@@ -3763,7 +3910,7 @@ InitInputSystem();</code></pre>
                     </ul>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// PlayerInput 생성
 if (PlayerInput == nullptr)
 {
@@ -3778,7 +3925,7 @@ if (PlayerInput == nullptr)
                 <h4>InputComponent 생성</h4>
                 <p>모든 액터는 InputComponent를 가질 수 있습니다. PlayerController 또한 Actor이므로 InputComponent를 생성하고 저장합니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// InputComponent 생성 후 저장
 SetupInputComponent();</code></pre>
                 </div>
@@ -3794,7 +3941,7 @@ SetupInputComponent();</code></pre>
                     </ul>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (InputComponent == NULL)
 {
     InputComponent = NewObject<UInputComponent>(
@@ -3826,7 +3973,7 @@ SetupInputComponent();</code></pre>
                 <h2>상세 코드 분석</h2>
                 <h3>전체 흐름</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">void APlayerController::SetPlayer(UPlayer* InPlayer)
 {
     // 1. 양방향 연결
@@ -3843,7 +3990,7 @@ SetupInputComponent();</code></pre>
 
                 <h3>Input 시스템 초기화 상세</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">void APlayerController::InitInputSystem()
 {
     // PlayerInput 생성
@@ -3959,7 +4106,7 @@ SetupInputComponent();</code></pre>
                 <h3>시작점: PostLogin</h3>
                 <p>핵심 로직은 HandleStartingNewPlayer_Implementation에서 처리됩니다.</p>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Pawn 생성과 Possess 진행
 HandleStartingNewPlayer(NewPlayer);</code></pre>
                 </div>
@@ -3970,7 +4117,7 @@ HandleStartingNewPlayer(NewPlayer);</code></pre>
                     <p>함수 이름의 '<strong>Restart</strong>'에 속지 말기! 실제로는 최초 시작 시에도 호출됩니다.</p>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// APlayerController* NewPlayer
 if (PlayerCanRestart(NewPlayer))
 {
@@ -3981,7 +4128,7 @@ if (PlayerCanRestart(NewPlayer))
                 <h2>플레이어 시작 조건 확인</h2>
                 <h3>PlayerCanRestart_Implementation</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (Player == nullptr || Player->IsPendingKillPending())
 {
     return false;
@@ -3992,7 +4139,7 @@ return Player->CanRestartPlayer();</code></pre>
 
                 <h3>APlayerController::CanRestartPlayer</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// PlayerState가 있어야 시작 가능!
 return PlayerState;</code></pre>
                 </div>
@@ -4037,7 +4184,7 @@ return PlayerState;</code></pre>
 
                 <h2>RestartPlayer 진입</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Pawn 생성 할 위치 결정
 AActor* StartSpot = FindPlayerStart(NewPlayer);
 
@@ -4124,7 +4271,7 @@ RestartPlayerAtPlayerStart(NewPlayer, StartSpot);</code></pre>
 
                 <h2>IncomingName으로 특정 PlayerStart 찾기</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// const FString& IncomingName
 
 // 이름 값을 넘겼으면 동일한 PlayerStart를 World에서 찾아서 반환
@@ -4145,7 +4292,7 @@ if (!IncomingName.IsEmpty())
                 <h2>ChoosePlayerStart 상세 로직</h2>
                 <h3>두 가지 배열 사용</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Pawn이 즉시 배치될 수 있는 충돌 없는 시작 지점 목록
 TArray<APlayerStart*> UnOccupiedStartPoints;
 
@@ -4155,7 +4302,7 @@ TArray<APlayerStart*> OccupiedStartPoints;</code></pre>
 
                 <h3>PlayerStart 분류</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">for (TActorIterator<APlayerStart> It(World); It; ++It)
 {
     APlayerStart* PlayerStart = *It;
@@ -4187,7 +4334,7 @@ TArray<APlayerStart*> OccupiedStartPoints;</code></pre>
 
                 <h3>최종 선택</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (FoundPlayerStart == nullptr)
 {
     // UnOccupiedStartPoints에 항목이 있으면 그중 하나를 무작위로 선택
@@ -4207,7 +4354,7 @@ return FoundPlayerStart;</code></pre>
 
                 <h2>최후의 수단: WorldSettings</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (BestStart == nullptr)
 {
     // 모든 케이스에서 없다면 WorldSetting이라도 사용 (이건 없을 수 없음)
@@ -4271,7 +4418,7 @@ return FoundPlayerStart;</code></pre>
 
                 <h2>1단계: 유효성 검증</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// AController* NewPlayer, AActor* StartSpot
 
 if (NewPlayer == nullptr || NewPlayer->IsPendingKillPending())
@@ -4297,7 +4444,7 @@ if (!StartSpot)
                 <h2>2단계: Pawn 생성</h2>
                 <h3>1️⃣ PlayerController에 이미 Pawn이 있는 경우</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">FRotator SpawnRotation = StartSpot->GetActorRotation();
 
 // 기존에 Controller에 Pawn이 존재하면 Rotation 그대로 사용
@@ -4309,7 +4456,7 @@ if (NewPlayer->GetPawn() != nullptr)
 
                 <h3>2️⃣ PlayerController에 Pawn이 없는 경우 (일반적)</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// DefaultPawn Class가 존재하는지 확인
 else if (GetDefaultPawnClassForController(NewPlayer) != nullptr)
 {
@@ -4336,7 +4483,7 @@ else if (GetDefaultPawnClassForController(NewPlayer) != nullptr)
 
                 <h2>3단계: 빙의 처리</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (!IsValid(NewPlayer->GetPawn()))
 {
     FailedToRestartPlayer(NewPlayer);
@@ -4415,7 +4562,7 @@ else
                 <h2>1단계: Pawn Class 가져오기</h2>
                 <h3>GetDefaultPawnClassForController_Implementation</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">UClass* AGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
     return DefaultPawnClass;
@@ -4435,7 +4582,7 @@ else
                 <h2>2단계: Pawn 실제 생성</h2>
                 <h3>SpawnDefaultPawnFor_Implementation</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// AController* NewPlayer, AActor* StartSpot
 
 // 생성 지점에서 Yaw값만 반영하도록 설정
@@ -4459,7 +4606,7 @@ return SpawnDefaultPawnAtTransform(NewPlayer, Transform);</code></pre>
 
                 <h2>3단계: Transform 기반 생성</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// AController* NewPlayer, const FTransform& SpawnTransform
 
 FActorSpawnParameters SpawnInfo;
@@ -4493,7 +4640,7 @@ return ResultPawn;</code></pre>
 
                 <h2>커스터마이징 예시</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">UClass* AMyGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
     // 플레이어 타입에 따라 다른 Pawn 사용
@@ -4550,7 +4697,7 @@ return ResultPawn;</code></pre>
 
                 <h2>3가지 단계</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Controller에 Pawn 저장
 Pawn = InPawn;
 Character = (Pawn ? Cast<ACharacter>(Pawn) : NULL);
@@ -4564,7 +4711,7 @@ AddPawnTickDependency(Pawn);</code></pre>
 
                 <h2>1단계: Pawn 저장</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Controller에 Pawn 저장
 Pawn = InPawn;
 Character = (Pawn ? Cast<ACharacter>(Pawn) : NULL);</code></pre>
@@ -4580,7 +4727,7 @@ Character = (Pawn ? Cast<ACharacter>(Pawn) : NULL);</code></pre>
 
                 <h2>2단계: Attach 처리</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Controller를 Pawn에 Attach 진행
 if (InPawn)
 {
@@ -4692,7 +4839,7 @@ else
 
                 <h2>Possess 메인 로직</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">APawn* CurrentPawn = GetPawn();
 
 // Pawn Possess 시도
@@ -4711,7 +4858,7 @@ if ((NewPawn != CurrentPawn) || bNotificationRequired)
 
                 <h2>OnPossess: 4단계 빙의 로직</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// APawn* PawnToPossess
 
 // 1단계: 이미 Controller에 Pawn이 존재하면? UnPossess 먼저 진행
@@ -4738,7 +4885,7 @@ SetPawn(PawnToPossess);</code></pre>
 
                 <h2>1단계: 기존 Pawn 연결 해제 (UnPossess)</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">if (GetPawn() != NULL)
 {
     // 폰의 연결 해제
@@ -4756,7 +4903,7 @@ SetPawn(NULL);</code></pre>
 
                 <h3>APawn::UnPossessed</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">AController* const OldController = Controller;
 
 PlayerState = nullptr;
@@ -4774,7 +4921,7 @@ DestroyPlayerInputComponent();</code></pre>
 
                 <h2>3단계: Pawn에서 Controller 설정 (PossessedBy)</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// Controller 설정
 Owner = NewController;
 Controller = NewController;
@@ -4867,7 +5014,7 @@ if (OldController != NewController)
 
                 <h2>DispatchRestart</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">void APawn::DispatchRestart(bool bCallClientRestart)
 {
     if (bCallClientRestart)
@@ -4886,7 +5033,7 @@ if (OldController != NewController)
                 <h2>카메라 처리</h2>
                 <h3>PawnClientRestart</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 폰으로 카메라 타겟 설정
 if (PC->bAutoManageActiveCameraTarget)
 {
@@ -4907,7 +5054,7 @@ if (InputComponent == nullptr)
 
                 <h2>카메라 타겟 설정</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// AActor* SuggestedTarget
 if (bAutoManageActiveCameraTarget)
 {
@@ -4927,7 +5074,7 @@ if (bAutoManageActiveCameraTarget)
                 <h2>Input 처리 3단계</h2>
                 <h3>1️⃣ InputComponent 생성</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">InputComponent = CreatePlayerInputComponent();</code></pre>
                 </div>
 
@@ -4944,13 +5091,13 @@ if (bAutoManageActiveCameraTarget)
 
                 <h3>3️⃣ RegisterComponent</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">InputComponent->RegisterComponent();</code></pre>
                 </div>
 
                 <h2>SetupPlayerInputComponent의 중요성</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     // Super 호출 (필수는 아니지만 권장)
@@ -5024,7 +5171,7 @@ if (bAutoManageActiveCameraTarget)
 
                 <h2>코드 분석</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// AController* NewPlayer, const FRotator& StartRotation
 
 NewPlayer->Possess(NewPlayer->GetPawn());
@@ -5051,7 +5198,7 @@ else
 
                 <h2>ClientSetRotation</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// FRotator NewRotation
 
 SetControlRotation(NewRotation);
@@ -5063,7 +5210,7 @@ if (Pawn != NULL)
 
                 <h2>FaceRotation 상세</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// FRotator NewControlRotation, float DeltaTime
 
 if (bUseControllerRotationPitch || bUseControllerRotationYaw || bUseControllerRotationRoll)
@@ -5100,7 +5247,7 @@ if (bUseControllerRotationPitch || bUseControllerRotationYaw || bUseControllerRo
                 <h2>실용적 예시</h2>
                 <h3>3인칭 캐릭터</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 일반적인 3인칭 설정
 bUseControllerRotationPitch = false;
 bUseControllerRotationYaw = false;    // 캐릭터가 자체 회전
@@ -5109,7 +5256,7 @@ bUseControllerRotationRoll = false;</code></pre>
 
                 <h3>1인칭 캐릭터</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">// 일반적인 1인칭 설정
 bUseControllerRotationPitch = true;   // 위아래 볼 때
 bUseControllerRotationYaw = true;     // 좌우 볼 때
@@ -5129,7 +5276,7 @@ bUseControllerRotationRoll = false;</code></pre>
 
                 <h2>커스터마이징 예시</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">void AMyGameMode::SetPlayerDefaults(APawn* PlayerPawn)
 {
     Super::SetPlayerDefaults(PlayerPawn);
@@ -5198,7 +5345,7 @@ bUseControllerRotationRoll = false;</code></pre>
                 <h2>코드 분석</h2>
                 <h3>UWorld::BeginPlay</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">AGameModeBase* const GameMode = GetAuthGameMode();
 if (GameMode)
 {
@@ -5214,7 +5361,7 @@ if (GameMode)
 
                 <h3>AGameModeBase::StartPlay</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">void AGameModeBase::StartPlay()
 {
     GameState->HandleBeginPlay();
@@ -5223,7 +5370,7 @@ if (GameMode)
 
                 <h3>AGameStateBase::HandleBeginPlay</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">void AGameStateBase::HandleBeginPlay()
 {
     bReplicatedHasBegunPlay = true;
@@ -5256,7 +5403,7 @@ if (GameMode)
 
                 <h2>WorldSettings의 NotifyBeginPlay</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <pre><code class="language-cpp">UWorld* World = GetWorld();
 if (!World->GetBegunPlay())
 {
@@ -12667,7 +12814,7 @@ void AMyActor::BeginPlay()
                 <h2>UBlueprint 클래스</h2>
                 <h3>1. 부모 클래스</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 블루프린트가 상속받는 부모 클래스 정보
 UPROPERTY(meta=(NoResetToDefault))
@@ -12678,7 +12825,7 @@ TSubclassOf&lt;UObject&gt; ParentClass;</code></pre>
 
                 <h3>2. 그래프 노드 저장</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 함수, 이벤트, 매크로 그래프 저장
 UPROPERTY()
@@ -12702,7 +12849,7 @@ TArray&lt;TObjectPtr&lt;UEdGraph&gt;&gt; MacroGraphs;     // 매크로 그래프
 
                 <h3>3. GeneratedClass (가장 중요!)</h3>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 실제 게임에서 사용되는 클래스
 UPROPERTY(nontransactional)
@@ -12749,7 +12896,7 @@ TSubclassOf&lt;class UObject&gt; GeneratedClass;  // UBlueprintGeneratedClass �
 
                 <h2>UBlueprintGeneratedClass</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// UClass를 상속하지만 블루프린트 메타데이터가 추가됨
 class UBlueprintGeneratedClass : public UClass, public IBlueprintPropertyGuidProvider
@@ -12834,7 +12981,7 @@ class UBlueprintGeneratedClass : public UClass, public IBlueprintPropertyGuidPro
 
                 <h2>UBlueprintGeneratedClass 구조</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>class UBlueprintGeneratedClass : public UClass, public IBlueprintPropertyGuidProvider
 {
@@ -12856,7 +13003,7 @@ class UBlueprintGeneratedClass : public UClass, public IBlueprintPropertyGuidPro
 
                 <h2>SCS 구조</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>class USimpleConstructionScript : public UObject
 {
@@ -12933,7 +13080,7 @@ C (B의 자식) - 0개 컴포넌트 생성
 
                 <h2>USCS_Node 클래스</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>class USCS_Node
 {
@@ -13028,7 +13175,7 @@ C (B의 자식) - 0개 컴포넌트 생성
 
                 <h2>UInheritableComponentHandler</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>class UInheritableComponentHandler
 {
@@ -13047,7 +13194,7 @@ C (B의 자식) - 0개 컴포넌트 생성
 
                 <h2>FComponentOverrideRecord</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>struct FComponentOverrideRecord
 {
@@ -13069,7 +13216,7 @@ C (B의 자식) - 0개 컴포넌트 생성
 
                 <h2>FComponentKey</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>struct FComponentKey
 {
@@ -13117,7 +13264,7 @@ BP1 (자식 블루프린트)
                 </div>
 
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>FComponentOverrideRecord record;
 // 어떤 부모 컴포넌트를 오버라이드하는지
@@ -13206,7 +13353,7 @@ record.ComponentTemplate = Component4; // Location: (50, 50, 50)</code></pre>
 
                 <h2>FinishSpawning에서의 호출</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>void AActor::FinishSpawning(const FTransform& UserTransform,
                             bool bIsDefaultTransform,
@@ -13243,7 +13390,7 @@ record.ComponentTemplate = Component4; // Location: (50, 50, 50)</code></pre>
 
                 <h2>1단계: 블루프린트 계층 구조 수집</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 1. 블루프린트 계층구조 부모를 전부 가져와서 저장
 // AActor ◄─────── BP0 ◄────── BP1
@@ -13257,7 +13404,7 @@ const bool bErrorFree = UBlueprintGeneratedClass::GetGeneratedClassesHierarchy(
 
                 <h2>2단계: SCS 실행 전 컴포넌트 수집</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 2. SCS 실행 전에 액터가 소유한 모든 컴포넌트를 가져옴
 TInlineComponentArray&lt;UActorComponent*&gt; PreSCSComponents;
@@ -13268,7 +13415,7 @@ GetComponents(PreSCSComponents);</code></pre>
 
                 <h2>3단계: Native C++ SceneComponent 정리</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 3. C++에서 정의된 SceneComponent 저장
 TInlineComponentArray&lt;USceneComponent*&gt; NativeSceneComponents;
@@ -13299,7 +13446,7 @@ for (UActorComponent* ActorComponent : PreSCSComponents)
 
                 <h2>4단계: 블루프린트 컴포넌트 생성 및 등록</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 배열을 거꾸로 순회하는 이유는 맨 뒤가 최상위 부모로 저장되어 있기 때문
 // ParentBPClassStack: [C, B, A]
@@ -13323,7 +13470,7 @@ for (int32 i = ParentBPClassStack.Num() - 1; i >= 0; i--)
 
                 <h2>5단계: 블루프린트 RootComponent 등록</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 5. 블루프린트 루트 컴포넌트가 생성되었고 혹시나 Register 안될 수 있어서 다시 체크
 if (HasDeferredComponentRegistration() && GetWorld()->bIsWorldInitialized)
@@ -13335,7 +13482,7 @@ if (HasDeferredComponentRegistration() && GetWorld()->bIsWorldInitialized)
 
                 <h2>6단계: 미등록 컴포넌트 확인 및 등록</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 6. SCS에서 중간에 생성된 등록되지 않은 새 컴포넌트를 체크해서 등록
 TInlineComponentArray&lt;UActorComponent*&gt; PostSCSComponents;
@@ -13353,7 +13500,7 @@ for (UActorComponent* ActorComponent : PostSCSComponents)
 
                 <h2>7단계: Blueprint Construction Script 호출</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 7. UserConstructionScript 호출
 ProcessUserConstructionScript();</code></pre>
@@ -13371,7 +13518,7 @@ ProcessUserConstructionScript();</code></pre>
 
                 <h2>8단계: C++ OnConstruction 호출</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 8. OnConstruction 호출
 OnConstruction(Transform);</code></pre>
@@ -13392,7 +13539,7 @@ OnConstruction(Transform);</code></pre>
 
                 <h2>Transform 최적화</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// bIsDefaultTransform가 true면 변화가 없으므로 SetWorldTransform을 진행하지 않음
 // 이동은 굉장히 무거운 연산임을 기억!
@@ -13433,7 +13580,7 @@ if (RootComponent && !bIsDefaultTransform)
 
                 <h2>호출 지점</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// AActor::ExecuteConstruction
 USimpleConstructionScript* SCS = CurrentBPGClass->SimpleConstructionScript;
@@ -13448,7 +13595,7 @@ if (SCS)
 
                 <h2>RootNodes 순회</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 블루프린트에서 생성한 컴포넌트 중 최상위만 RootNodes
 for (USCS_Node* RootNode : RootNodes)
@@ -13461,7 +13608,7 @@ for (USCS_Node* RootNode : RootNodes)
 
                 <h2>DefaultSceneRootNode 처리</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// RootNode가 DefaultSceneRootNode인 경우
 // RootComponent가 없는 경우에만 생성하도록 설정
@@ -13494,7 +13641,7 @@ if (RootNode && ((RootNode != DefaultSceneRootNode) || (RootComponent == nullptr
 
                 <h2>부모 컴포넌트 찾기</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>USceneComponent* ParentComponent = nullptr;
 
@@ -13574,7 +13721,7 @@ BP1 (자식, 현재 SCS)
 
                 <h2>컴포넌트 생성 요청</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 액터와 부모정보를 모두 넘겨서 루트노드의 컴포넌트 + 자식 컴포넌트까지 모두 생성
 RootNode->ExecuteNodeOnActor(Actor,
@@ -13588,7 +13735,7 @@ RootNode->ExecuteNodeOnActor(Actor,
 
                 <h2>예외 상황 처리</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// RootNode도 없고 RootComponent도 없는 특수한 상황에는
 // 임시 SceneComponent를 생성해서 Root로 설정
@@ -13663,7 +13810,7 @@ else if(Actor->GetRootComponent() == nullptr)
 
                 <h2>템플릿 가져오기 (가장 중요!)</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// Actor에서 Class를 가져와 BlueprintGeneratedClass로 형변환
 UBlueprintGeneratedClass* ActualBPGC = CastChecked&lt;UBlueprintGeneratedClass&gt;(Actor->GetClass());
@@ -13680,7 +13827,7 @@ if (UActorComponent* ActualComponentTemplate = GetActualComponentTemplate(Actual
 
                 <h2>GetActualComponentTemplate - 오버라이딩 체크</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// SCS_Node의 Outer는 SCS!
 const USimpleConstructionScript* SCS = GetSCS();
@@ -13723,7 +13870,7 @@ return OverridenComponentTemplate ? OverridenComponentTemplate : ToRawPtr(Compon
 
                 <h2>CreateComponentFromTemplate</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>UActorComponent* NewActorComp = nullptr;
 
@@ -13759,7 +13906,7 @@ return NewActorComp;</code></pre>
 
                 <h2>RootComponent 설정 (중요!)</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// ParentComponent가 null인 경우 블루프린트에서는 무조건 Root임
 if (!IsValid(ParentComponent))
@@ -13790,7 +13937,7 @@ if (!IsValid(ParentComponent))
 
                 <h2>일반 컴포넌트 부착 및 등록</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// RootComponent가 있는 경우에는 Parent에 부착 초기설정만 진행
 else
@@ -13808,7 +13955,7 @@ if (bRegisterComponent)
 
                 <h2>액터 변수에 저장 (리플렉션)</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// Actor의 Name에 해당하는 컴포넌트 변수에 NewActorComp를 할당
 FName VarName = InternalVariableName;
@@ -13837,7 +13984,7 @@ if (VarName != NAME_None)
 
                 <h2>자식 노드 재귀 생성</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 내 자식이 존재한다면 동일하게 호출
 USceneComponent* ParentSceneComponentOfChildren =
@@ -13932,7 +14079,7 @@ for (int32 NodeIdx = 0; NodeIdx < ChildNodes.Num(); NodeIdx++)
 
                 <h2>1단계: NewObject로 액터 생성</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 가장 먼저 NewObject를 통해 액터 생성
 AActor* Actor = NewObject&lt;AActor&gt;(GetTransientPackage(), Class);</code></pre>
@@ -13942,7 +14089,7 @@ AActor* Actor = NewObject&lt;AActor&gt;(GetTransientPackage(), Class);</code></p
 
                 <h2>2단계: DispatchOnComponentsCreated</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// Native C++ 관련 컴포넌트만 처리
 Actor->DispatchOnComponentsCreated();</code></pre>
@@ -13952,7 +14099,7 @@ Actor->DispatchOnComponentsCreated();</code></pre>
 
                 <h2>3단계: 블루프린트 컴포넌트 지연</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 블루프린트 컴포넌트가 root라면 지연
 if (BlueprintComponentIsRoot)
@@ -13968,7 +14115,7 @@ if (BlueprintComponentIsRoot)
 
                 <h2>4단계: FinishSpawning - ExecuteConstruction</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// FinishSpawning에서 ExecuteConstruction 호출
 Actor->FinishSpawning(Transform, bIsDefaultTransform);
@@ -13983,7 +14130,7 @@ ExecuteConstruction
 
                 <h2>5단계: PostActorConstruction</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// PostActorConstruction에서 초기화 관련 로직을 순차적으로 진행
 PostActorConstruction();
@@ -14025,7 +14172,7 @@ PostActorConstruction();
                 </div>
 
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>void APlayerController::PostInitializeComponents()
 {
@@ -14043,7 +14190,7 @@ PostActorConstruction();
 
                 <h2>6단계: DispatchBeginPlay</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code>// 마지막에 DispatchBeginPlay
 Actor->DispatchBeginPlay();</code></pre>
@@ -14280,7 +14427,7 @@ Actor->DispatchBeginPlay();</code></pre>
 
                 <h2>UWorld::Tick에서 카메라 업데이트</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">// World Tick의 마지막 순간에 Camera View Update
 for (FConstPlayerControllerIterator Iterator = GetPlayerControllerIterator(); Iterator; ++Iterator)
@@ -14310,7 +14457,7 @@ if (bDoingActorTicks)
 
                 <h2>DoUpdateCamera: 본격적인 카메라 업데이트</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">void APlayerCameraManager::DoUpdateCamera(float DeltaTime)
 {
@@ -14341,7 +14488,7 @@ if (bDoingActorTicks)
 
                 <h2>AActor::CalcCamera - 핵심 함수</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">void AActor::CalcCamera(float DeltaTime, FMinimalViewInfo& OutResult)
 {
@@ -14440,7 +14587,7 @@ if (bDoingActorTicks)
                     </div>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">// UEngine::Tick
 // 엔진 틱 후반부에서 Viewport의 Draw 함수를 호출하며 렌더링 진행
@@ -14454,7 +14601,7 @@ GameViewport->Viewport->Draw();</code></pre>
 
                 <h2>FViewport::Draw - Canvas 생성</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">// 렌더링은 캔버스라는 단위로 진행
 // Viewport는 여러 개의 캔버스를 가질 수 있음
@@ -14497,7 +14644,7 @@ Canvas.SetRenderTargetRect(FIntRect(0, 0, SizeX, SizeY));
                     </table>
                 </div>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">// 매 프레임마다 씬을 렌더링하기 위해 생성되는 View에 대한 RAII인 ViewFamily 생성
 FSceneViewFamilyContext ViewFamily(
@@ -14510,7 +14657,7 @@ FSceneViewFamilyContext ViewFamily(
 
                 <h2>LocalPlayer별 View 생성</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">// 로컬 플레이어를 순회하며 CalcSceneView를 호출하여
 // 플레이어 카메라 정보를 활용해 FSceneView를 생성
@@ -14544,7 +14691,7 @@ for (FLocalPlayerIterator Iterator(GEngine, MyWorld); Iterator; ++Iterator)
 
                 <h2>렌더링 스레드로 전달</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">// ViewFamily에 있는 SceneView 정보(카메라 위치, 렌더링 설정 등)를
 // 렌더링 스레드로 전달하여 실제 렌더링 과정 시작
@@ -14626,7 +14773,7 @@ GetRendererModule().BeginRenderingViewFamily(SceneCanvas, &ViewFamily);</code></
 
                 <h2>CalcSceneView</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">FSceneView* ULocalPlayer::CalcSceneView(
     class FSceneViewFamily* ViewFamily,
@@ -14670,7 +14817,7 @@ GetRendererModule().BeginRenderingViewFamily(SceneCanvas, &ViewFamily);</code></
 
                 <h2>CalcSceneViewInitOptions - 3단계 검증</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">bool ULocalPlayer::CalcSceneViewInitOptions(
     struct FSceneViewInitOptions& ViewInitOptions,
@@ -14719,7 +14866,7 @@ GetRendererModule().BeginRenderingViewFamily(SceneCanvas, &ViewFamily);</code></
 
                 <h2>GetViewPoint - 카메라 정보 가져오기</h2>
                 <div class="code-block">
-                    <div class="code-header"><span class="code-lang">C++</span></div>
+                    <div class="code-header"></div>
                     <div class="code-content">
 <pre><code class="language-cpp">void ULocalPlayer::GetViewPoint(FMinimalViewInfo& OutViewInfo)
 {
@@ -14891,7 +15038,6 @@ GetCameraCacheView (로드)
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">GC가 방지하는 문제들</span>
                     </div>
                     <div class="code-content">
@@ -15044,7 +15190,6 @@ enemy->Attack(player); // 댕글링 포인터!
                 <h3>GC 호출 체인</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">UWorld::Tick</span>
                     </div>
                     <div class="code-content">
@@ -15064,7 +15209,6 @@ enemy->Attack(player); // 댕글링 포인터!
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">UEngine::ConditionalCollectGarbage - 중복 호출 방지</span>
                     </div>
                     <div class="code-content">
@@ -15095,7 +15239,6 @@ enemy->Attack(player); // 댕글링 포인터!
                 <h3>핵심 함수: PerformReachabilityAnalysisAndConditionallyPurgeGarbage</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">GC의 3단계</span>
                     </div>
                     <div class="code-content">
@@ -15120,7 +15263,6 @@ enemy->Attack(player); // 댕글링 포인터!
                 <h3>Pre GC: 비동기 로딩 처리</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">PreCollectGarbageImpl</span>
                     </div>
                     <div class="code-content">
@@ -15181,7 +15323,6 @@ enemy->Attack(player); // 댕글링 포인터!
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">StartReachabilityAnalysis 구조</span>
                     </div>
                     <div class="code-content">
@@ -15211,7 +15352,6 @@ enemy->Attack(player); // 댕글링 포인터!
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">FGCObject 사용 예시</span>
                     </div>
                     <div class="code-content">
@@ -15243,7 +15383,6 @@ private:
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">UEngine::Init - Root 등록</span>
                     </div>
                     <div class="code-content">
@@ -15271,7 +15410,6 @@ private:
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">SwapReachableAndMaybeUnreachable</span>
                     </div>
                     <div class="code-content">
@@ -15301,7 +15439,6 @@ static void FGCFlags::SwapReachableAndMaybeUnreachable()
                 <h3>Root Object 마킹 및 수집</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">MarkRootObjectsAsReachable</span>
                     </div>
                     <div class="code-content">
@@ -15352,7 +15489,6 @@ static void FGCFlags::SwapReachableAndMaybeUnreachable()
                 <h3>ProcessObjectArray - 핵심 로직</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">ProcessObjectArray</span>
                     </div>
                     <div class="code-content">
@@ -15403,7 +15539,6 @@ static void FGCFlags::SwapReachableAndMaybeUnreachable()
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">예시: GC 대상 vs 비대상</span>
                     </div>
                     <div class="code-content">
@@ -15434,7 +15569,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
                 <h3>VisitMembers - 멤버 변수 순회</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">VisitMembers</span>
                     </div>
                     <div class="code-content">
@@ -15475,7 +15609,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
                 <h3>HandleValidReference - 마킹 처리</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">HandleValidReference</span>
                     </div>
                     <div class="code-content">
@@ -15541,7 +15674,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
                 <h3>WeakPtr 자동 처리</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">ClearWeakReferences</span>
                     </div>
                     <div class="code-content">
@@ -15574,7 +15706,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
                 <h3>GatherUnreachableObjects - 마킹되지 않은 객체 수집</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">GatherUnreachableObjects</span>
                     </div>
                     <div class="code-content">
@@ -15636,7 +15767,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">ConditionalFinishDestroy</span>
                     </div>
                     <div class="code-content">
@@ -15666,7 +15796,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">올바른 FinishDestroy 오버라이드</span>
                     </div>
                     <div class="code-content">
@@ -15687,7 +15816,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
                 <h3>DestroyObjects - 최종 메모리 반환</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">DestroyObjects</span>
                     </div>
                     <div class="code-content">
@@ -15729,7 +15857,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">UEngine::Init - Root 등록</span>
                     </div>
                     <div class="code-content">
@@ -15751,7 +15878,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">SetRootFlags - 핵심 로직</span>
                     </div>
                     <div class="code-content">
@@ -15800,7 +15926,6 @@ float Exp;  // UPROPERTY 아님</code></pre>
                 <h3>왜 Destroy 함수가 필요한가?</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">SpawnActor - Level에 저장</span>
                     </div>
                     <div class="code-content">
@@ -15838,7 +15963,6 @@ LevelToSpawnIn->TryAddActorToList(Actor, false);</code></pre>
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">KillFlag 처리</span>
                     </div>
                     <div class="code-content">
@@ -15885,7 +16009,6 @@ void KillReference(UObject*& Object)
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">올바른 유효성 체크</span>
                     </div>
                     <div class="code-content">
@@ -15950,7 +16073,6 @@ if (MyActor != nullptr)
                 <h3>기본 사용법</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">UE4 vs UE5 방식</span>
                     </div>
                     <div class="code-content">
@@ -15967,7 +16089,6 @@ TObjectPtr&lt;AActor&gt; MyActor;</code></pre>
                 <h2>TObjectPtr 구조</h2>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">TObjectPtr 정의</span>
                     </div>
                     <div class="code-content">
@@ -16004,7 +16125,6 @@ struct TObjectPtr
                 <h2>FObjectPtr의 핵심 - GC Barrier</h2>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">FObjectPtr 내부</span>
                     </div>
                     <div class="code-content">
@@ -16093,7 +16213,6 @@ Frame 3: GC Sweep
                 <h3>TObjectPtr의 해결책</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">쓰기 장벽 작동</span>
                     </div>
                     <div class="code-content">
@@ -16145,7 +16264,6 @@ Frame 4 (Sweep):
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">쿠킹 변환</span>
                     </div>
                     <div class="code-content">
@@ -16202,7 +16320,6 @@ TArray&lt;AActor*&gt; Actors;</code></pre>
                 <h3>마이그레이션 가이드</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">UE4 → UE5 변환</span>
                     </div>
                     <div class="code-content">
@@ -16307,7 +16424,6 @@ TArray&lt;TObjectPtr&lt;AActor&gt;&gt; Actors;</code></pre>
 
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">FWeakObjectPtr 정의</span>
                     </div>
                     <div class="code-content">
@@ -16345,7 +16461,6 @@ struct FWeakObjectPtr
                 <h3>Internal_Get 과정</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">객체 조회 과정</span>
                     </div>
                     <div class="code-content">
@@ -16443,7 +16558,6 @@ After GC (ObjectA 제거, ObjectB 생성):
                 <h3>문제: 순환 참조</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">순환 참조 문제</span>
                     </div>
                     <div class="code-content">
@@ -16466,7 +16580,6 @@ class AWeapon
                 <h3>해결: Weak Reference</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">순환 참조 해결</span>
                     </div>
                     <div class="code-content">
@@ -16500,7 +16613,6 @@ class AWeapon
                 <h3>패턴 1: 역참조 (Back Reference)</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">부모-자식 관계</span>
                     </div>
                     <div class="code-content">
@@ -16523,7 +16635,6 @@ class UMyComponent
                 <h3>패턴 2: 캐싱 시스템</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">캐시 구현</span>
                     </div>
                     <div class="code-content">
@@ -16559,7 +16670,6 @@ class UMyComponent
                 <h3>패턴 3: 옵저버 패턴</h3>
                 <div class="code-block">
                     <div class="code-header">
-                        <span class="code-lang">C++</span>
                         <span class="code-title">옵저버 목록</span>
                     </div>
                     <div class="code-content">
@@ -16704,6 +16814,74 @@ if (AActor* Actor = WeakActor.Get())
             'ptr-sec1', 'ptr-sec2'
         ];
 
+        // 챕터 ID 매핑 (카드/마인드맵에서 사용하는 ID -> 실제 리스트 ID)
+        const chapterIdMap = {
+            'framework': 'framework',
+            'tick': 'tick',
+            'component': 'component',
+            'object': 'object',
+            'spawn': 'spawn',
+            'blueprint': 'blueprint',
+            'render': 'render',
+            'gc': 'gc',
+            'ptr': 'ptr'
+        };
+
+        // 첫 번째 섹션 ID 매핑
+        const firstSectionMap = {
+            'framework': 'fw-sec1',
+            'tick': 'tick-sec1',
+            'component': 'comp-sec1',
+            'object': 'obj-sec1',
+            'spawn': 'spawn-sec1',
+            'blueprint': 'bp-sec1',
+            'render': 'render-sec1',
+            'gc': 'gc-sec1',
+            'ptr': 'ptr-sec1'
+        };
+
+        // 마인드맵/카드에서 챕터로 이동
+        function goToChapter(chapterId) {
+            const listId = chapterIdMap[chapterId] + '-list';
+            const list = document.getElementById(listId);
+            if (!list) return;
+
+            // 챕터 토글 열기
+            const toggle = list.previousElementSibling;
+            if (toggle && toggle.classList.contains('collapsed')) {
+                toggle.classList.remove('collapsed');
+                list.classList.remove('collapsed');
+            }
+
+            // 첫 번째 섹션 표시
+            const firstSectionId = firstSectionMap[chapterId];
+            if (firstSectionId) {
+                showSection(chapterIdMap[chapterId], firstSectionId);
+            }
+        }
+
+        // 대시보드 HTML 저장
+        let dashboardHTML = '';
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboard = document.getElementById('dashboard');
+            if (dashboard) {
+                dashboardHTML = dashboard.outerHTML;
+            }
+        });
+
+        // 대시보드 표시 함수
+        function showDashboard() {
+            const contentArea = document.getElementById('content');
+            if (dashboardHTML) {
+                contentArea.innerHTML = dashboardHTML;
+            }
+            // 활성 섹션 표시 제거
+            document.querySelectorAll('.section-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            currentSectionIndex = -1;
+        }
+
         function toggleChapter(element) {
             element.classList.toggle('collapsed');
             const list = element.nextElementSibling;
@@ -16764,8 +16942,8 @@ if (AActor* Actor = WeakActor.Get())
             }
         }
 
-        // Initialize first section
-        showSection('framework', 'fw-sec1');
+        // 초기 화면: 대시보드 표시 (자동 섹션 로드 제거)
+        // showSection('framework', 'fw-sec1');
     </script>
 </body>
 </html>
